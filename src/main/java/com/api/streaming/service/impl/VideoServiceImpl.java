@@ -3,6 +3,7 @@ package com.api.streaming.service.impl;
 import com.api.streaming.config.StorageProperties;
 import com.api.streaming.exception.FailChargeException;
 import com.api.streaming.exception.IncorrectFileException;
+import com.api.streaming.exception.NotFoundException;
 import com.api.streaming.model.Clasification;
 import com.api.streaming.model.Video;
 import com.api.streaming.model.VideoClasification;
@@ -68,7 +69,11 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public List<Video> searchVideos(String query) {
-        return videoRepository.findAll(Specification.where(VideoSpecification.videoHasDescription(query)).or(VideoSpecification.videoHasTitle(query)));
+        List<Video> results= videoRepository.findAll(Specification.where(VideoSpecification.videoHasDescription(query)).or(VideoSpecification.videoHasTitle(query)));
+        if(results.isEmpty()){
+            throw new NotFoundException("No se encontraron resultados");
+        }
+        return results;
     }
 
     @Override
