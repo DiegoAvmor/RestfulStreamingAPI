@@ -7,8 +7,12 @@ import com.api.streaming.model.UserRecommendation;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface RecommendationRepository extends JpaRepository<UserRecommendation,Integer>{
     Optional<List<UserRecommendation>> findByIdUser(Integer id);
+
+    @Transactional
+    void deleteByIdUser(Integer id);
 }
