@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
             //Se crea el token
             TokenDto token = new TokenDto();
             token.setToken(jwtTokenUtil.generateToken(user));
+            System.out.println(UserUtil.getActualSession().getEmail().isEmpty());
             return token;
         }
         throw new NotFoundException("El usuario no fue encontrado");
@@ -152,6 +153,13 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException("No tiene permitido realizar esa instrucción");
         }
         throw new NotFoundException("No se encontró información relacionada");
+    }
+
+    public boolean testSesion(){
+        if(!UserUtil.getActualSession().getEmail().isEmpty()){
+            return true;
+        }
+        return false;
     }
        
 }
