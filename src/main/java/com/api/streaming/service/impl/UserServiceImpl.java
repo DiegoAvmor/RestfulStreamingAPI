@@ -119,9 +119,12 @@ public class UserServiceImpl implements UserService {
         if(opt.isPresent()){
             if(UserUtil.getActualSession().getEmail().equals(opt.get().getEmail())){
                 ratingRepository.deleteByIdUser(id);
+                //Si el usuario tiene videos
                 Optional<Video>result = videoRepository.findByAutor(opt.get());
-                result.get().setAutorNull();
-                videoRepository.save(result.get());
+                if(result.isPresent()){
+                    result.get().setAutorNull();
+                    videoRepository.save(result.get());
+                }
                 recommendationRepository.deleteByIdUser(id);
                 userPreferencesTagsRepository.deleteByUser(opt.get());
                 userRepository.delete(opt.get());

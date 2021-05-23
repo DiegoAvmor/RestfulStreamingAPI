@@ -1,6 +1,10 @@
 package com.api.streaming;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.api.streaming.exception.AccessDeniedException;
+import com.api.streaming.exception.NotFoundException;
 import com.api.streaming.model.User;
 import com.api.streaming.model.dto.TokenDto;
 import com.api.streaming.model.request.LoginUserRequest;
@@ -23,8 +27,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 public class UserServiceTest {
 
     @Autowired
@@ -37,10 +43,12 @@ public class UserServiceTest {
     private JwtTokenUtil jwtUtil;
 
     @BeforeEach
-    public void setup(){
+    public void setupBefore(){
         LoginUserRequest request = new LoginUserRequest();
-        request.setEmail("carlos@outlook.es");
-        request.setPassword("12345678");
+        request.setEmail("josefina@outlook.es");
+        request.setPassword("josefa123");
+        //request.setEmail("carlos@outlook.es");
+        //request.setPassword("12345678");
         TokenDto token = userServiceImpl.loadUser(request);
         try {
             JwtConsumer jwtConsumer = new JwtConsumerBuilder().setSkipSignatureVerification().build();
@@ -68,10 +76,40 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Test the Fucking sesion")
+    @DisplayName("Test Sesion Function")
     public void testSesion(){
         assertTrue(userServiceImpl.testSesion());
     }
 
+    @Test
+    @DisplayName("Test User Not Found")
+    public void testUserNotFound(){
+        Integer a = 10;
+        assertThrows(NotFoundException.class, ()->userServiceImpl.deleteUser(a));
+    }
 
-}
+    @Test
+    @DisplayName("Test User Not Allowed")
+    public void testInValidUser(){
+        Integer a = 4;
+        assertThrows(AccessDeniedException.class, ()->userServiceImpl.deleteUser(a));
+    }
+
+    
+    @Test
+    @DisplayName("Test Delete new User")
+    public void testDeleteNewUser(){
+        Integer a = 1;
+        assertNotNull(userServiceImpl.deleteUser(a));
+    }
+    
+    /*
+    @Test
+    @DisplayName("Test Delete Old User")
+    public void testDeleteOldUser(){
+        Integer a = 2;
+        assertNotNull(userServiceImpl.deleteUser(a));
+    }*/
+    
+    // INSERT INTO users (users.id_user, users.name, users.email, users.password, users.role, users.created_at, users.updated_at) VALUES('1', 'Josefina', 'josefina@outlook.es', 'josefa123', '1', '2021-05-19 03:16:14', '2021-05-27 00:00:00')
+}   
