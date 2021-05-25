@@ -107,6 +107,13 @@ INSERT INTO `videos_clasifications` (`id_videos_clasifications`, `id_video`, `ta
 (9, 3, 'SUSPENSO'),
 (10, 4, 'COMEDIA');
 
+CREATE TABLE `user_recommendations_log` (
+  `id_log` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `id_video` int(11) NOT NULL,
+  `log_date` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id_role`);
 
@@ -137,6 +144,9 @@ ALTER TABLE `videos_clasifications`
   ADD PRIMARY KEY (`id_videos_clasifications`),
   ADD KEY `id_video` (`id_video`);
 
+ALTER TABLE `user_recommendations_log`
+  ADD PRIMARY KEY (`id_log`);
+
 ALTER TABLE `roles`
   MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
@@ -154,6 +164,9 @@ ALTER TABLE `videos`
 
 ALTER TABLE `videos_clasifications`
   MODIFY `id_videos_clasifications` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+ALTER TABLE `user_recommendations_log`
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role`) REFERENCES `roles` (`id_role`);
@@ -174,4 +187,9 @@ ALTER TABLE `videos`
 
 ALTER TABLE `videos_clasifications`
   ADD CONSTRAINT `videos_clasifications_ibfk_1` FOREIGN KEY (`id_video`) REFERENCES `videos` (`id_video`);
+
+ALTER TABLE `user_recommendations_log`
+  ADD CONSTRAINT `users_recommendations_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`),
+  ADD CONSTRAINT `users_recommendations_ibfk_2` FOREIGN KEY (`id_video`) REFERENCES `videos` (`id_video`);
+
 COMMIT;
