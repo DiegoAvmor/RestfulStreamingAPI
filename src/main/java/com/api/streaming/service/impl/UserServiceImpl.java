@@ -93,9 +93,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserRecommendation> getRecommendations(Integer id){
+    public List<Object> getRecommendations(Integer id){
 
-        Optional<List<UserRecommendation>> recommendations = recommendationRepository.findByIdUser(id);
+        Optional<List<Object>> recommendations = recommendationRepository.getRecommendations(id);
         if(recommendations.isPresent()){
             //Solo devuelvo el string, no está como array
             return recommendations.get();
