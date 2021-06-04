@@ -1,12 +1,10 @@
 package com.api.streaming.service.impl;
 
 import com.api.streaming.config.StorageProperties;
-import com.api.streaming.controller.VideoController;
-import com.api.streaming.exception.AccessDeniedException;
 import com.api.streaming.exception.FailChargeException;
 import com.api.streaming.exception.IncorrectFileException;
+import com.api.streaming.exception.NotFoundException;
 import com.api.streaming.model.Clasification;
-import com.api.streaming.model.User;
 import com.api.streaming.model.Video;
 import com.api.streaming.model.VideoClasification;
 import com.api.streaming.model.request.VideoEditRequest;
@@ -16,26 +14,21 @@ import com.api.streaming.util.TokenGenerator;
 import com.api.streaming.model.request.VideoUploadRequest;
 import com.api.streaming.repository.VideoRepository;
 import com.api.streaming.service.VideoService;
+import com.api.streaming.specification.VideoSpecification;
 import com.api.streaming.util.UserUtil;
-import org.jose4j.jwk.Use;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpRange;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.FilenameUtils;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -76,9 +69,11 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public List<Video> searchVideos(String query) {
-        String queryForm = "SELECT * FROM videos WHERE MATCH (titulo,description) AGAINST ('" + query + "' IN BOOLEAN MODE)";
-        List<Video> videos =(List<Video>)entityManager.createNativeQuery(queryForm,Video.class).getResultList();
-        return videos;
+        List<Video> results= videoRepository.findAll(Specification.where(VideoSpecification.videoHasDescription(query)).or(VideoSpecification.videoHasTitle(query)));
+        if(results.isEmpty()){
+            throw new NotFoundException("No se encontraron resultados");
+        }
+        return results;
     }
 
     @Override
