@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
             //Solo devuelvo el string, no está como array
             return recommendations.get();
         }
-        throw new NotFoundException("No se recommendaciones asociadas al usuario");
+        throw new NotFoundException("No se encontraron recommendaciones asociadas al usuario");
     }
 
     @Override
