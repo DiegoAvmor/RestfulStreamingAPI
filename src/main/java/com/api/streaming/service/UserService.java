@@ -15,7 +15,7 @@ public interface UserService {
 
     public User registerUser(RegisterUserRequest request);
 
-    public List<Object> getRecommendations(Integer id);
+    public List<UserRecommendation> getRecommendations(Integer id);
 
     public User deleteUser(Integer id);
 

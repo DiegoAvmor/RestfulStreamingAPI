@@ -68,7 +68,7 @@ public class UserController {
 
     //Endpoint Recomendaciones
     @GetMapping("/users/{id}/recomendations")
-    public ResponseEntity<List<Object>> getRecommendation(@PathVariable Integer id){
+    public ResponseEntity<List<UserRecommendation>> getRecommendation(@PathVariable Integer id){
         return ResponseEntity.ok().body(userService.getRecommendations(id));
     }
 
