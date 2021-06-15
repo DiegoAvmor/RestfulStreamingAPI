@@ -54,4 +54,7 @@ public class Video {
     @JsonBackReference
     private List<VideoClasification> videosClasification;
 
+    public void setAutorNull(){
+        this.autor = null;
+    }
 }

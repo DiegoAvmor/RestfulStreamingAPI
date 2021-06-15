@@ -11,17 +11,21 @@ import com.api.streaming.exception.AlreadyRegistered;
 import com.api.streaming.model.User;
 import com.api.streaming.model.UserPreferencesTags;
 import com.api.streaming.model.UserRecommendation;
+import com.api.streaming.model.Video;
 import com.api.streaming.model.dto.TokenDto;
 import com.api.streaming.model.request.LoginUserRequest;
 import com.api.streaming.model.request.RegisterUserRequest;
+import com.api.streaming.repository.RatingRepository;
 import com.api.streaming.repository.RecommendationRepository;
 import com.api.streaming.repository.RolesRepository;
 import com.api.streaming.repository.UserPreferencesTagsRepository;
 import com.api.streaming.repository.UserRepository;
+import com.api.streaming.repository.VideoRepository;
 import com.api.streaming.service.UserService;
 import com.api.streaming.util.JwtTokenUtil;
 import com.api.streaming.util.UserUtil;
 import com.api.streaming.model.Clasification;
+import com.api.streaming.model.Rating;
 import com.api.streaming.model.Role;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RecommendationRepository recommendationRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
+
+    @Autowired
+    private VideoRepository videoRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -108,8 +118,17 @@ public class UserServiceImpl implements UserService {
         Optional<User> opt = userRepository.findById(id);
         if(opt.isPresent()){
             if(UserUtil.getActualSession().getEmail().equals(opt.get().getEmail())){
+                ratingRepository.deleteByIdUser(id);
+                //Si el usuario tiene videos
+                Optional<Video>result = videoRepository.findByAutor(opt.get());
+                if(result.isPresent()){
+                    result.get().setAutorNull();
+                    videoRepository.save(result.get());
+                }
+                recommendationRepository.deleteByIdUser(id);
+                userPreferencesTagsRepository.deleteByUser(opt.get());
                 userRepository.delete(opt.get());
-                return opt.get();
+                return new User();
             }
             throw new AccessDeniedException("No tiene permitido realizar esa instrucción");
         }
@@ -136,6 +155,13 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException("No tiene permitido realizar esa instrucción");
         }
         throw new NotFoundException("No se encontró información relacionada");
+    }
+
+    public boolean testSesion(){
+        if(!UserUtil.getActualSession().getEmail().isEmpty()){
+            return true;
+        }
+        return false;
     }
        
 }
