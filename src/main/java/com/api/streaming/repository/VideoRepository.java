@@ -3,8 +3,11 @@ package com.api.streaming.repository;
 import com.api.streaming.model.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +17,8 @@ public interface VideoRepository extends JpaRepository<Video,Integer>, JpaSpecif
 
     void deleteVideoByIdSerializable(String idSerializable);
 
+    @Transactional
+    @Query(value = "SELECT id_video, titulo, average_rating FROM videos ORDER BY average_rating DESC LIMIT 5", nativeQuery= true)
+    Optional<List<Object>> getSortedVideos();
+    
 }
