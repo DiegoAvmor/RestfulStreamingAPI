@@ -2,13 +2,11 @@ package com.api.streaming.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.core.io.support.ResourceRegion;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +47,7 @@ public class Video {
 
     @Lob
     @Column(name = "video_location")
+    @JsonIgnore
     private String location;
 
     @OneToMany(mappedBy = "video",cascade = CascadeType.REMOVE)
