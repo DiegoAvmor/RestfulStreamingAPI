@@ -1,5 +1,7 @@
 package com.api.streaming.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.api.streaming.model.Rating;
@@ -48,4 +50,8 @@ public class RatingController {
         return ResponseEntity.ok().body(ratingService.deleteRating(ratingId));
     }
     
+    @GetMapping("/ratings/top")
+    public ResponseEntity<List<Object>> topRatings(){
+        return ResponseEntity.ok().body(ratingService.topRatings());
+    }
 }

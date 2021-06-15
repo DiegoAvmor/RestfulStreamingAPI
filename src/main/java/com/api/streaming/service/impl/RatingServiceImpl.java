@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.api.streaming.exception.AlreadyRegistered;
@@ -98,5 +99,15 @@ public class RatingServiceImpl implements RatingService{
             return rating.get();
         }
         throw new NotFoundException("La calificacion no existe");
+    }
+
+    @Override
+    public List<Object> topRatings(){
+        Optional<List<Object>> topR=videoRepository.getSortedVideos();
+        if(topR.isPresent()){
+            return topR.get();
+        }
+        throw new NotFoundException ("No se han encontrado videos calificados.");
+
     }
 }
